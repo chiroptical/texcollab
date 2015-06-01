@@ -1,7 +1,10 @@
 texcollab
 =========
 
-A LaTeX/Git wrapper for the "Advisor-Student/s Mergeless" model written entirely in shell script.
+A LaTeX/Git wrapper for the "Advisor-Student/s Mergeless" model written entirely in shell script. I work on
+an up to date Arch Linux machine and I suppose the compatability should be okay, but you
+will obviously need `git`, `openssh`, and `latex` (we use `texlive`). If you have issues, please ask me, but
+I can't guarentee I can help with everything.
 
 # Why does this exist?
 
@@ -14,20 +17,21 @@ and fix the problem by simplifying and developing a standard collaboration workf
 As I said, I dislike `git merge` for LaTeX and I need a simple workflow for new students. So, the model consists
 of the `master` branch (advisor) and a branch for each "student" (I will refer to myself as the student i.e. the
 `barrymoo` branch). The student is never allowed to commit to `master` and my advisor is never allowed to commit
-to `barrymoo`. Neither the student nor the advisor will ever `git merge`.
+to `barrymoo`. Neither the student nor the advisor will ever `texcollab merge` (note it doesn't exist!).
 
 # How can I use this model?
 
 It's pretty easy, I promise. First, you need to set up some configuration variables inside `.texcollab` (see
-the one in this repo as an example). We are using this tool for publications which means a public github really
-isn't a great idea. We have a storage server with `ssh` access, the domain goes in `TEXCOLLAB_REMOTE_DOMAIN`.
+the one in this repo as an example). My group uses this tool for publications which means a public github really
+isn't a great idea. We have storage on a remote machine with `ssh` access, that domain is in `TEXCOLLAB_REMOTE_DOMAIN`.
 On the remote machine exists a place where I put my "in-progress" publications, something like
 `/$SOME_PATH/shared/latex/barrymoo/$PROJECT_NAME`, which I set as `TEXCOLLAB_REMOTE_DIR` (obviously all but the
 `$PROJECT_NAME` should already exist!). The project name should be unique and will be stored on the remote machine
-as `$PROJECT_NAME.git` (a standard style for git repos). Finally, you should set your advisors and your name for 
-`TEXCOLLAB_ADVISOR/TEXCOLLAB_STUDENT`, respectively. Now place your `*.tex` file, `*.bib` files (if necessary),
-figures to the `figures` directory (Always use `supporting-information.tex` for supporting information). Run
-`texcollab init`, if you have figures run `texcollab figures push` (additionally), and let the git magic ensue :) 
+as `$PROJECT_NAME.git` (a standard style for git remote repos). Finally, you should set your advisors and your
+user name for `TEXCOLLAB_ADVISOR/TEXCOLLAB_STUDENT`, respectively. Now place your `*.tex` file, `*.bib`
+files (if necessary), figures to the `figures` directory (Always use `supporting-information.tex` for
+supporting information). Run `texcollab init`, if you have figures run `texcollab figures push` (additionally), and let the git magic ensue :) Note, that `texcollab compile` exists and you should probably make sure it compiles
+properly before sending it to your advisor (they hate when it doesn't compile right!). 
 
 # How does my advisor use this model?
 
@@ -39,17 +43,23 @@ student branch visible, and voila!
 # What do I do now, how do we share commits?
 
 Again, easy :P I hope you see the pattern now. Both the student and advisor can make changes willy-nilly! Commit,
-push, pull, figures push/pull, etc. When the advisor, or student, are ready to pull in the other ones changes
+push, pull, figures push/pull, etc. When the advisor, or student, are ready to "merge" in the changes
 run `texcollab compare something.tex`, this will open up the `TEXCOLLAB_MERGE_TOOL` (we like meld) and then
-pick and choose the changes you want (or don't!). Finally, commit/push and the other collaborator is ready to go.
+one can pick and choose the changes (or don't!). Finally, commit/push and the other collaborator is ready to go.
 
 # Cool, how do I add collaborators?
 
-I won't say it this time. Pass the collaborator the `.texcollab`, change the `TEXCOLLAB_STUDENT` variable, clone
+I won't say it this time. Pass the collaborator the `.texcollab`, have them change the `TEXCOLLAB_STUDENT` variable, clone
 the repository as the advisor does, and `texcollab checkout $USER` (the $USER should be equal to `TEXCOLLAB_STUDENT`
-point). Now, the advisor can pull and `texcollab branch $new_student_branch` to `meld` with both students changes.
+point). Now, the advisor can pull and `texcollab branch $new_student_branch` to `meld` with both students changes. Note this is the only time one uses `checkout`, always use `branch` to change or list branches!
 
 # Anything else?
 
 This is work in progess and I haven't done much testing as of yet. Please send me issues, or suggestions, here
-on github. I am very interested in making a nice collaboration tool!
+on github. I am very interested in making a nice collaboration tool for everyone. Feel free to fork, and submit changes :). 
+
+# Stuff I want to add
+
+* Some fancy `texcollab log` output, to make viewing changes/previous commits easy.
+* Extension of `compare`, or new command (maybe <previous>), to deal with comparisons of previous commits on current/different branches
+* Maybe a <view> command to view previous commits on current/different branches
