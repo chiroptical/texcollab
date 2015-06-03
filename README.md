@@ -29,14 +29,7 @@ allowed to commit to `master` and my advisor is never allowed to commit to
 
 We assume you have ssh access to a private server to store the git remote
 repository. Additionally, you should set up password-less login to that server.
-Finally, we suggest to use `.ssh/config` to ease the process.  For example:
-
-<code>
-Host bserver
-    User barrymoo
-    HostName ip.address
-</code>
-
+Finally, we suggest to use `.ssh/config` to ease the process.
 Googling "ssh config" yields [Simplify Your Life With an SSH Config 
 File](http://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/).
 The link should be enough to get you started.
