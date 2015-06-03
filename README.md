@@ -96,12 +96,10 @@ the config key to compare with previous commits too (see `-h/--help`)
 
 Pass the collaborator the `.texcollab`, have them change the
 `TEXCOLLAB_STUDENT` variable, clone the repository as the advisor does, and
-`texcollab checkout $TEXCOLLAB_STUDENT` (the `$TEXCOLLAB_STUDENT` is 
+`texcollab add-collab $TEXCOLLAB_STUDENT` (the `$TEXCOLLAB_STUDENT` is 
 obviously the new collaborator). The collaborator can now edit/commit/push/pull
 as normal now. AND, more importantly (arguably), the advisor can pull and `texcollab
-branch $NEW_STUDENT_BRANCH` to "merge" changes from both students. Note this is
-the only time one uses `checkout`, always use `branch` to change or list
-branches! I will probably change the name of this command in the near future.
+branch $NEW_STUDENT_BRANCH` to "merge" changes from both students.
 
 # `view` and `compare`, what's a revision?
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Currently supported commands, add string to usage as they become available
-supported_commands=("init" "clone" "branch" "checkout" "commit" "push" "pull" "figures" "compile" "compare" "log" "view") 
+supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "figures" "compile" "compare" "log" "view") 
 function usage() {
     echo "texcollab -- A latex collaboration engine using git"
     echo "    written by: Barry Moore"
@@ -11,7 +11,7 @@ function usage() {
     echo "    init                             -- initialize a remote directory"
     echo "    clone <repo> [name]              -- clone <repo>"
     echo "    branch [branch]                  -- list branch or change to [branch]"
-    echo "    checkout <branch>                -- create <branch> and change to <branch>"
+    echo "    add-collab <branch>                -- create <branch> and change to <branch>"
     echo "                                     --> use 'texcollab branch' for existing branches"   
     echo "    commit <message>                 -- add all, commit with <message>, and push to current branch"
     echo "                                     --> .gitignore better be set properly"
@@ -176,11 +176,11 @@ function branch(){
     fi
 }
 
-function checkout(){
+function add-collab(){
     local array=($*)
     # Check command options, git will fail if they provide improper command
     if [ ${#array[@]} -ne 1 ]; then
-        errors+=("Error <checkout>: Have you used checkout before?, try -h/--help")
+        errors+=("Error <add-collab>: Have you used add-collab before?, try -h/--help")
         return 1
     else
         git checkout -b ${array[@]}
