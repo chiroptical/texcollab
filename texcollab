@@ -22,6 +22,23 @@ function usage() {
     echo "    compare <file> <branch> -- compare <file> with <branch>/<file>"
 }
 
+# remote helper function
+function remote_texcollab_helper(){
+    if [ -d $1 ]; then
+        return 1
+    else
+        fig=($(echo $1 | sed 's/\// /g'))
+        if [ "${fig[@]:(-1)}" == "figures" ]; then
+            mkdir $1
+        else
+            mkdir $1
+            cd $1
+            git init --bare
+        fi
+        return 0
+    fi
+}
+
 # Function simply checks the command line for no arguments or -h/--help
 function check_command_line() {
     if [ $# -eq 0 ]; then
@@ -85,7 +102,8 @@ function init(){
     
     # Check if the remote repository is already a git repository
     #   User should set up ssh keys prior to this
-    ssh $TEXCOLLAB_REMOTE_DOMAIN "remote-texcollab-helper.sh $TEXCOLLAB_REMOTE_DIR.git"
+    #   typeset allows functions to be apparent to ssh connection
+    ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git"
     
     # Check if we're in a git repository already, otherwise init
     if [ -d ."git" ]; then
@@ -249,7 +267,7 @@ function figures(){
     else
         if [ ${array[0]} == "push" ]; then
             # First push will need this command
-            ssh $TEXCOLLAB_REMOTE_DOMAIN "remote-texcollab-helper.sh $TEXCOLLAB_REMOTE_DIR.git/figures"
+            ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git/figures"
 
             # Push
             scp figures/* $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/figures
