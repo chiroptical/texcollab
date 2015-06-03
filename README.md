@@ -103,6 +103,23 @@ branch $NEW_STUDENT_BRANCH` to "merge" changes from both students. Note this is
 the only time one uses `checkout`, always use `branch` to change or list
 branches! I will probably change the name of this command in the near future.
 
+# `view` and `compare`, what's a revision?
+
+In the `-h/--help` string, you may see that `view` and `compare` work with revisions,
+but what is a revision? A revision is basically a previous commit's version of the file
+of interest. The best way to get this information is to run `texcollab log`, for example:
+
+```
+commit 45f158b34cef9141aaeacebc09f37ff800071132
+Author: Jon Doe
+Date: Tue Jun 2 11:54:07 2015
+
+    Initial Commit
+```
+
+The revision is: `45f158b34cef9141aaeacebc09f37ff800071132`, copy and paste the string
+to `compare` and `view` to use the revision.
+
 # Anything else?
 
 This is a work-in-progress and I haven't done much testing as of yet. Please send
