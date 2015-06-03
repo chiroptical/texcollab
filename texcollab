@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
 
 # Currently supported commands, add string to usage as they become available
-supported_commands=("init" "clone" "branch" "checkout" "commit" "push" "pull" "figures" "compile" "compare") 
+supported_commands=("init" "clone" "branch" "checkout" "commit" "push" "pull" "figures" "compile" "compare" "log" "view") 
 function usage() {
     echo "texcollab -- A latex collaboration engine using git"
     echo "    written by: Barry Moore"
     echo "Usage:"
     echo "    texcollab <command> [option]"
     echo "Available Commands:"
-    echo "    init                    -- initialize a remote directory"
-    echo "    clone <repo> [name]     -- clone <repo>"
-    echo "    branch [branch]         -- list branch or change to [branch]"
-    echo "    checkout <branch>       -- create <branch> and change to <branch>"
-    echo "                            --> use 'texcollab branch' for existing branches"   
-    echo "    commit <message>        -- add all, commit with <message>, and push to current branch"
-    echo "                            --> .gitignore better be set properly"
-    echo "    push                    -- push to remote"
-    echo "    pull                    -- pull from remote"
-    echo "    figures <command>       -- <push|pull> figures"
-    echo "    compile                 -- compile the latex document"
-    echo "    compare <file> <branch> -- compare <file> with <branch>/<file>"
+    echo "    init                             -- initialize a remote directory"
+    echo "    clone <repo> [name]              -- clone <repo>"
+    echo "    branch [branch]                  -- list branch or change to [branch]"
+    echo "    checkout <branch>                -- create <branch> and change to <branch>"
+    echo "                                     --> use 'texcollab branch' for existing branches"   
+    echo "    commit <message>                 -- add all, commit with <message>, and push to current branch"
+    echo "                                     --> .gitignore better be set properly"
+    echo "    push                             -- push to remote"
+    echo "    pull                             -- pull from remote"
+    echo "    figures <command>                -- <push|pull> figures"
+    echo "    compile                          -- compile the latex document"
+    echo "    compare <file> <branch/revision> -- compare <file> with <branch/revision>:<file>"
+    echo "    log [branch]                     -- view commit log of current branch, or [branch]"
+    echo "    view <file> <branch/revision>    -- view file <branch/revision>:<file>"
 }
 
 # remote helper function
@@ -56,7 +58,7 @@ function check_command_line() {
 
 function texcollab_source() {
     # Valid Configuration Variables
-    local configs=("TEXCOLLAB_REMOTE_DIR" "TEXCOLLAB_MERGE_TOOL" "TEXCOLLAB_REMOTE_DOMAIN" "TEXCOLLAB_ADVISOR" "TEXCOLLAB_STUDENT")
+    local configs=("TEXCOLLAB_REMOTE_DIR" "TEXCOLLAB_MERGE_TOOL" "TEXCOLLAB_REMOTE_DOMAIN" "TEXCOLLAB_ADVISOR" "TEXCOLLAB_STUDENT" "TEXCOLLAB_CURRENT_USER" "TEXCOLLAB_EDITOR")
 
     # Try to generate the environment variables
     if [ -f .texcollab ]; then
@@ -89,7 +91,7 @@ function texcollab_source() {
 function string_in_array() {
     local array=($*)
     for i in ${array[@]:1}; do
-        if [ "${array[@]:0:1}" == "$i" ]; then
+        if [ "${array[0]}" == "$i" ]; then
             return 0
         fi
     done
@@ -146,7 +148,7 @@ function clone(){
 
     # We do a dumb test to see if <repo> looks valid
     #   git should be able to yield other errors
-    local test=$(echo "${array[@]:0:1}" | grep ":")
+    local test=$(echo "${array[0]}" | grep ":")
     if [ ! "$test" ]; then
         errors+=("Error <clone>: <repo> doesn't look like a domain")
         errors+=("--> Did you forget 'rush:/somedir'?")
@@ -198,7 +200,7 @@ function commit(){
         # You can't commit to another persons repo
         #  Obviously, people could mess with the configs, but I can't fix stupid
         local current_branch=$(git branch | sed -n '/\* /s///p')
-        if [ $USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
+        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
             git add --all
             # eval gets around issue with quotes
             eval git commit -m \"${array[@]}\"
@@ -225,7 +227,7 @@ function push(){
         # You can't push to another persons repo
         #  Obviously, people could mess with the configs, but I can't fix stupid
         local current_branch=$(git branch | sed -n '/\* /s///p')
-        if [ $USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
+        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
             git push origin $current_branch
         elif [ $current_branch == $TEXCOLLAB_STUDENT ]; then
             git push origin $current_branch
@@ -346,7 +348,7 @@ function compare(){
         # You shouldn't be allowed to compare things if they aren't yours
         #  Obviously, people could mess with the configs, but I can't fix stupid
         local current_branch=$(git branch | sed -n '/\* /s///p')
-        if [ $USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
+        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
             git show ${array[1]}:${array[0]} > ${array[1]}:${array[0]}.tmp
             meld ${array[0]} ${array[1]}:${array[0]}.tmp
             rm ${array[1]}:${array[0]}.tmp
@@ -360,10 +362,42 @@ function compare(){
     fi
 }
 
+function view(){
+    local array=($*)
+    # Check command options, git will fail if they provide improper command
+    if [ ! ${#array[@]} -eq 2 ]; then
+        errors+=("Error <view>: Have you used compare before?, try -h/--help")
+        return 1
+    else
+        # Source Environment
+        texcollab_source "<view>"
+
+        # We can let people <view> whatever they please, we'll append the
+        #   file extension twice to ensure we have syntax highlighting
+        #   in the temporary file
+        git show ${array[1]}:${array[0]} > ${array[1]}:${array[0]}.${array[0]##*.}
+        $TEXCOLLAB_EDITOR ${array[1]}:${array[0]}.${array[0]##*.}
+        rm ${array[1]}:${array[0]}.${array[0]##*.}
+    fi
+}
+
+function log(){
+    local array=($*)
+    # Check command options, git will fail if they provide improper command
+    if [ ${#array[@]} -eq 0 ]; then
+        git log
+    elif [ ${#array[@]} -eq 1 ]; then
+        git log ${array[0]}
+    else
+        errors+=("Error <history>: Have you used compare before?, try -h/--help")
+        return 1
+    fi
+}
+
 # Turn command line options into useful arrays
 #   We also define an errors array to capture warnings and errors
 arguments=($*)
-command=${arguments[@]:0:1}
+command=${arguments[0]}
 options=${arguments[@]:1}
 errors=()
 
