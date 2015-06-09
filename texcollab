@@ -11,7 +11,7 @@ function usage() {
     echo "    init                             -- initialize a remote directory"
     echo "    clone <repo> [name]              -- clone <repo>"
     echo "    branch [branch]                  -- list branch or change to [branch]"
-    echo "    add-collab <branch>                -- create <branch> and change to <branch>"
+    echo "    add-collab <branch>              -- create <branch> and change to <branch>"
     echo "                                     --> use 'texcollab branch' for existing branches"   
     echo "    commit <message>                 -- add all, commit with <message>, and push to current branch"
     echo "                                     --> .gitignore better be set properly"
