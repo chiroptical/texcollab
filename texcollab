@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Currently supported commands, add string to usage as they become available
-supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "figures" "compile" "compare" "log" "view") 
+supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status") 
 function usage() {
     echo "texcollab -- A latex collaboration engine using git"
     echo "    written by: Barry Moore"
@@ -13,11 +13,12 @@ function usage() {
     echo "    branch [branch]                  -- list branch or change to [branch]"
     echo "    add-collab <branch>              -- create <branch> and change to <branch>"
     echo "                                     --> use 'texcollab branch' for existing branches"   
+    echo "    status                           --> check status of files, does anything need to be committed?"
     echo "    commit <message>                 -- add all, commit with <message>, and push to current branch"
     echo "                                     --> .gitignore better be set properly"
     echo "    push                             -- push to remote"
     echo "    pull                             -- pull from remote"
-    echo "    figures <command>                -- <push|pull> figures"
+    echo "    extras <command>                -- <push|pull> extras, includes figures, panels, and schemes"
     echo "    compile                          -- compile the latex document"
     echo "    compare <file> <branch/revision> -- compare <file> with <branch/revision>:<file>"
     echo "    log [branch]                     -- view commit log of current branch, or [branch]"
@@ -26,12 +27,19 @@ function usage() {
 
 # remote helper function
 function remote_texcollab_helper(){
+    local extras=("figures" "panels" "schemes" "spreadsheets")
     if [ -d $1 ]; then
         return 1
     else
-        fig=($(echo $1 | sed 's/\// /g'))
-        if [ "${fig[@]:(-1)}" == "figures" ]; then
-            mkdir $1
+        local tmp=($(echo $1 | sed 's/\// /g'))
+        if [ "${tmp[@]:(-1)}" == "extras" ]; then 
+            unset tmp[${#tmp[@]}-1]
+            local path=$(echo ${tmp[@]} | sed 's/ /\//g')
+            for i in ${extras[@]}; do
+                if [ ! -d /$path/$i ]; then
+                    mkdir /$path/$i
+                fi
+            done
         else
             mkdir $1
             cd $1
@@ -39,6 +47,19 @@ function remote_texcollab_helper(){
         fi
         return 0
     fi
+}
+
+# Another remote helper function
+function remote_extras_list(){
+    local extras=("figures" "panels" "schemes" "spreadsheets")
+    local actual_extras=()
+    for i in ${extras[@]}; do
+        if [ -d $1/$i ]; then
+            actual_extras+=("$i")
+        fi
+    done
+    echo ${actual_extras[@]}
+    return 1
 }
 
 # Function simply checks the command line for no arguments or -h/--help
@@ -118,12 +139,16 @@ function init(){
     # Create our .gitignore
     echo ".texcollab" > .gitignore
     echo "figures/*" >> .gitignore
+    echo "panels/*" >> .gitignore
+    echo "schemes/*" >> .gitignore
+    echo "spreadsheets/*" >> .gitignore
     echo "*.dvi" >> .gitignore
     echo "*.pdf" >> .gitignore
     echo "*.aux" >> .gitignore
     echo "*.bbl" >> .gitignore
     echo "*.blg" >> .gitignore
     echo "*.log" >> .gitignore
+    echo "*~" >> .gitignore
 
     # Now we can add, commit, push to master
     git remote add origin $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git
@@ -254,31 +279,31 @@ function pull(){
     fi
 }
 
-function figures(){
+function extras(){
     # Need our environment
-    texcollab_source "<figures>"
+    texcollab_source "<extras>"
+    local extras=("figures" "panels" "schemes" "spreadsheets")
 
     local array=($*)
     # Check command options, git will fail if they provide improper command
     if [ ! ${#array[@]} -eq 1 ]; then
-        errors+=("Error <figures>: Have you used figures before?, try -h/--help")
+        errors+=("Error <extras>: Have you used extras before?, try -h/--help")
         return 1
     elif [ ! ${array[0]} == "push" ] && [ ! ${array[0]} == "pull" ]; then
-        errors+=("Error <figures>: valid commands to <figures> include 'push' and 'pull', try -h/--help")
+        errors+=("Error <extras>: valid commands to <extras> include 'push' and 'pull', try -h/--help")
         return 1
     else
         if [ ${array[0]} == "push" ]; then
-            # First push will need this command
-            ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git/figures"
+            # First push will need this command, "/extras" just gets us to the correct `else if` statement in remote_texcollab_helper
+            ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git/extras"
 
-            # Push
-            scp figures/* $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/figures
+            # Push, build up an actual extras array
+            local actual_extras=$(remote_extras_list .)
+            rsync -avrz -e ssh --delete ${actual_extras[@]} $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/
         else
-            # Pull, scp will take care of issues, if figures doesn't exist make it
-            if [ ! -d figures ]; then
-                mkdir figures
-            fi
-            scp $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/figures/* figures
+            # Pull, build up an actual extras array
+            local actual_extras=$(ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_extras_list $TEXCOLLAB_REMOTE_DIR.git")
+            rsync -avrz -e ssh $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/{$(echo ${actual_extras[@]} | sed 's/ /,/g')} .
         fi
     fi
 }
@@ -389,7 +414,18 @@ function log(){
     elif [ ${#array[@]} -eq 1 ]; then
         git log ${array[0]}
     else
-        errors+=("Error <history>: Have you used compare before?, try -h/--help")
+        errors+=("Error <log>: Have you used log before?, try -h/--help")
+        return 1
+    fi
+}
+
+function status(){
+    local array=($*)
+    # Check command options, git will fail if they provide improper command
+    if [ ${#array[@]} -eq 0 ]; then
+        git status
+    else
+        errors+=("Error <status>: Have you used status before?, try -h/--help")
         return 1
     fi
 }
