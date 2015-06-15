@@ -18,7 +18,7 @@ function usage() {
     echo "                                     --> .gitignore better be set properly"
     echo "    push                             -- push to remote"
     echo "    pull                             -- pull from remote"
-    echo "    extras <command>                -- <push|pull> extras, includes figures, panels, and schemes"
+    echo "    extras <command>                 -- <push|pull> extras, includes figures, panels, and schemes"
     echo "    compile                          -- compile the latex document"
     echo "    compare <file> <branch/revision> -- compare <file> with <branch/revision>:<file>"
     echo "    log [branch]                     -- view commit log of current branch, or [branch]"
