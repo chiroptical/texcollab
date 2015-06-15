@@ -13,7 +13,7 @@ function usage() {
     echo "    branch [branch]                  -- list branch or change to [branch]"
     echo "    add-collab <branch>              -- create <branch> and change to <branch>"
     echo "                                     --> use 'texcollab branch' for existing branches"   
-    echo "    status                           --> check status of files, does anything need to be committed?"
+    echo "    status                           -- check status of files, does anything need to be committed?"
     echo "    commit <message>                 -- add all, commit with <message>, and push to current branch"
     echo "                                     --> .gitignore better be set properly"
     echo "    push                             -- push to remote"
