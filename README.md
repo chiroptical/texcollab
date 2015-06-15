@@ -4,7 +4,7 @@ texcollab
 A LaTeX/Git wrapper for the "Advisor-Student/s Mergeless" model written
 entirely in shell script. I work on an up to date Arch Linux machine and I
 suppose the compatibility should be okay, but you will obviously need `git`,
-`openssh`, and `latex` (we use `texlive`). If you have issues, please ask me,
+`openssh`, `rsync`, and `latex` (we use `texlive`). If you have issues, please ask me,
 but I can't guarantee I can help with everything. I don't imply any warranty
 with this script! It has worked for me, but I guarantee nothing.
 
