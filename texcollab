@@ -215,7 +215,7 @@ function add-collab(){
 function commit(){
     local array=($*)
     # Check command options, git will fail if they provide improper command
-    if [ ! ${#array[@]} -gt 1 ]; then
+    if [ ! ${#array[@]} -ge 1 ]; then
         errors+=("Error <commit>: Have you used commit before?, try -h/--help")
         return 1
     else
@@ -363,7 +363,7 @@ function compile(){
 function compare(){
     local array=($*)
     # Check command options, git will fail if they provide improper command
-    if [ ${#array[@]} -eq 1 ]; then
+    if [ ! ${#array[@]} -eq 2 ]; then
         errors+=("Error <compare>: Have you used compare before?, try -h/--help")
         return 1
     else
