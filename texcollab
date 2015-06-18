@@ -375,11 +375,11 @@ function compare(){
         local current_branch=$(git branch | sed -n '/\* /s///p')
         if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
             git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
-            meld ${array[0]} ${array[1]}-${array[0]}.tmp
+            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-${array[0]}.tmp
             rm ${array[1]}-${array[0]}.tmp
         elif [ $current_branch == $TEXCOLLAB_STUDENT ]; then
             git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
-            meld ${array[0]} ${array[1]}-${array[0]}.tmp
+            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-${array[0]}.tmp
             rm ${array[1]}-${array[0]}.tmp
         else
             errors+=("Error <compare>: You should be working in your branch!")
