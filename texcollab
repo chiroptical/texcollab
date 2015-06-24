@@ -235,6 +235,7 @@ function commit(){
             eval git commit -m \"${array[@]}\"
         else
             errors+=("Error <commit>: You are not allowed to commit here!")
+            return 1
         fi
     fi
 }
@@ -258,6 +259,7 @@ function push(){
             git push origin $current_branch
         else
             errors+=("Error <push>: You are not allowed to push there!")
+            return 1
         fi
     fi
 }
@@ -383,6 +385,7 @@ function compare(){
             rm ${array[1]}-${array[0]}.tmp
         else
             errors+=("Error <compare>: You should be working in your branch!")
+            return 1
         fi
     fi
 }
