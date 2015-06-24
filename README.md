@@ -54,12 +54,13 @@ you should set your advisors and your user name for
 `view` command.
 
 Now you're ready to initialize the directory! Place your `*.tex` file, `*.bib`
-files (if necessary), and figures to the `figures` directory (Always use
-`supporting-information.tex` for supporting information). Run `texcollab init`,
-if you have figures run `texcollab figures push` (additionally), and let the
-git magic ensue :) Note, that `texcollab compile` exists and you should
-probably make sure it compiles properly before sending it to your advisor (they
-hate when it doesn't compile right!). 
+files (if necessary), and extras (figures, spreadsheets, panels, or schemes)
+into the corresponding directories (Always use `supporting-information.tex` for
+supporting information). Run `texcollab init`, if you have extras run
+`texcollab extras push` (additionally), and let the git magic ensue :) Note,
+that `texcollab compile` exists and you should probably make sure it compiles
+properly before sending it to your advisor (they hate when it doesn't compile
+right!). 
 
 # How does my advisor use this model?
 
@@ -74,8 +75,8 @@ available outside the script unless you make them available.
 
 Once the clone is complete, the advisor would navigate to the new local git
 repository and modify `TEXCOLLAB_CURRENT_USER` to `$TEXCOLLAB_ADVISOR`, and
-other environment setting they choose. If you have figures run `texcollab
-figures pull`, they need to run `texcollab branch $TEXCOLLAB_STUDENT` (again,
+other environment setting they choose. If you have extras run `texcollab
+extras pull`, they need to run `texcollab branch $TEXCOLLAB_STUDENT` (again,
 enter student manually) to make the student branch visible (git doesn't do this
 automatically), and `texcollab compile`. Voila!
 
@@ -84,7 +85,7 @@ automatically), and `texcollab compile`. Voila!
 Again, easy :P I hope you see the pattern now.
 
 Both the student and advisor can make changes willy-nilly! Commit, push, pull,
-figures push/pull, etc. When the advisor, or student, are ready to "merge"
+extras push/pull, etc. When the advisor, or student, are ready to "merge"
 changes run `texcollab compare main.tex barrymoo` (`main.tex` of `master` with
 `main.tex` of `barrymoo`, for example), this will open up the
 `TEXCOLLAB_MERGE_TOOL` (we use meld) and then one can pick and choose the
