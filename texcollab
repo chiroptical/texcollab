@@ -276,11 +276,11 @@ function pull(){
         # Normal Pull Functionality
         local current_branch=$(git branch | sed -n '/\* /s///p')
         local branches=($(git branch | sed 's/\*//'))
-        #for i in ${branches[@]}; do
-        #    git checkout $i
-        #    git pull origin $i
-        #done
-        #git checkout $current_branch
+        for i in ${branches[@]}; do
+            git checkout $i
+            git pull origin $i
+        done
+        git checkout $current_branch
 
         # Check for new files which don't exist in current branch
         for i in ${branches[@]}; do
