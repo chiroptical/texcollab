@@ -8,6 +8,10 @@ suppose the compatibility should be okay, but you will obviously need `git`,
 but I can't guarantee I can help with everything. I don't imply any warranty
 with this script! It has worked for me, but I guarantee nothing.
 
+A small disclaimer: `texcollab` wraps `git` commands, therefore most of the
+output you see is from `git ...`. I could hide the output from `git ...`,
+however it is sometimes nice to see (for example, when there are errors).
+
 # Why does this exist?
 
 `git merge` works perfectly fine for source code, but LaTeX is not quite like

@@ -5,6 +5,8 @@ supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" 
 function usage() {
     echo "texcollab -- A latex collaboration engine using git"
     echo "    written by: Barry Moore"
+    echo "    disclaimer: output from these commands is most likely from git itself!"
+    echo "                You may need to figure out how to solve your error with this tool."
     echo "Usage:"
     echo "    texcollab <command> [option]"
     echo "Available Commands:"
@@ -131,7 +133,7 @@ function init(){
 
     # Check if remote_texcollab_helper worked
     if [ ! $? -eq 0 ]; then
-        errors+=("Error <init>: issue with $TEXCOLLAB_REMOTE_DIR, please check .texcollab")
+        errors+=("Error <init>: issue with $TEXCOLLAB_REMOTE_DIR, does it already exist on $TEXCOLLAB_REMOTE_DOMAIN?")
         return 1
     fi
     
