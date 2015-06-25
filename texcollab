@@ -128,9 +128,15 @@ function init(){
     #   User should set up ssh keys prior to this
     #   typeset allows functions to be apparent to ssh connection
     ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git"
+
+    # Check if remote_texcollab_helper worked
+    if [ ! $? -eq 0 ]; then
+        errors+=("Error <init>: issue with $TEXCOLLAB_REMOTE_DIR, please check .texcollab")
+        return 1
+    fi
     
     # Check if we're in a git repository already, otherwise init
-    if [ -d ."git" ]; then
+    if [ -d ".git" ]; then
         errors+=('Error <init>: why are we in a git repository?')
         return 1
     else
