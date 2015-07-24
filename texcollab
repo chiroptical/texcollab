@@ -295,9 +295,9 @@ function pull(){
             if [ "$i" == "$current_branch" ]; then
                 continue
             else
-                local new_files=($(git diff --diff-filter=A --name-only $i))
+                local new_files=($(git diff --diff-filter=A --name-only $current_branch..$i))
                 for j in ${new_files[@]}; do
-                    read -p "Copy new file '$j' from branch '$i' (y,N)? " choice
+                    read -p "Add new file '$j' from branch '$i' (y,N)? " choice
                     case "$choice" in
                         y|Y )
                             git show $i:$j > $j
