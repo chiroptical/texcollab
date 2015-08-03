@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Currently supported commands, add string to usage as they become available
-supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status" "save") 
+supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status" "save" "new") 
 function usage() {
     echo "texcollab -- A latex collaboration engine using git"
     echo "    written by: Barry Moore"
@@ -26,6 +26,7 @@ function usage() {
     echo "    log [branch]                     -- view commit log of current branch, or [branch]"
     echo "    view <file> <branch/revision>    -- view file <branch/revision>:<file>"
     echo "    save <file> <branch/revision>    -- save file <branch/revision>:<file> as <branch>-<file>.tmp"
+    echo "    new                              -- show what's new"
 }
 
 # remote helper function
@@ -473,6 +474,27 @@ function save(){
         return 1
     else
         git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
+    fi
+}
+
+function new(){
+    local array=($*)
+    local current_branch=$(git branch | sed -n '/\* /s///p')
+    local branches=($(git branch | sed 's/\*//'))
+    # Check command options, git will fail if they provide improper command
+    if [ ${#array[@]} -eq 0 ]; then
+        for i in ${branches[@]}; do
+            if [ "$i" == "$current_branch" ]; then
+                continue
+            else
+                echo "===> Begin: $current_branch..$i <==="
+                git diff --name-status $current_branch..$i
+                echo "===>   End: $current_branch..$i <==="
+            fi
+        done
+    else
+        errors+=("Error <new>: Have you used status before?, try -h/--help")
+        return 1
     fi
 }
 
