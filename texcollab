@@ -130,7 +130,7 @@ function init(){
     # Check if the remote repository is already a git repository
     #   User should set up ssh keys prior to this
     #   typeset allows functions to be apparent to ssh connection
-    ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git"
+    ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git" 2> /dev/null
 
     # Check if remote_texcollab_helper worked
     if [ ! $? -eq 0 ]; then
@@ -330,15 +330,15 @@ function extras(){
     else
         if [ ${array[0]} == "push" ]; then
             # First push will need this command, "/extras" just gets us to the correct `else if` statement in remote_texcollab_helper
-            ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git/extras"
+            ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git/extras" 2> /dev/null
 
             # Push, build up an actual extras array
             local actual_extras=$(remote_extras_list .)
-            rsync -avrz -e ssh --delete ${actual_extras[@]} $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/
+            rsync -avrz -e ssh --delete ${actual_extras[@]} $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/ 2> /dev/null
         else
             # Pull, build up an actual extras array
             local actual_extras=$(ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_extras_list $TEXCOLLAB_REMOTE_DIR.git")
-            rsync -avrz -e ssh $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/{$(echo ${actual_extras[@]} | sed 's/ /,/g')} .
+            rsync -avrz -e ssh $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/{$(echo ${actual_extras[@]} | sed 's/ /,/g')} . 2> /dev/null  
         fi
     fi
 }
