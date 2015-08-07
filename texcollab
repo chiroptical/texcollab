@@ -365,7 +365,7 @@ function compile(){
         latex -halt-on-error $1       
         check_latex_return_status     
         bibtex $1                     
-        latex -halt-on-error $1       
+        pdflatex -halt-on-error $1       
         check_latex_return_status     
     }                                 
 
