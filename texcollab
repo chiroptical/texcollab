@@ -42,12 +42,14 @@ function remote_texcollab_helper(){
             for i in ${extras[@]}; do
                 if [ ! -d /$path/$i ]; then
                     mkdir /$path/$i
+                    chmod -R ug+wX /$path/$i
                 fi
             done
         else
             mkdir $1
             cd $1
             git init --bare
+            chmod -R ug+wX *
         fi
         return 0
     fi
