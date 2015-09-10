@@ -39,17 +39,17 @@ function remote_texcollab_helper(){
         if [ "${tmp[@]:(-1)}" == "extras" ]; then 
             unset tmp[${#tmp[@]}-1]
             local path=$(echo ${tmp[@]} | sed 's/ /\//g')
+            local group=$(groups | awk '{print $1}')
             for i in ${extras[@]}; do
                 if [ ! -d /$path/$i ]; then
                     mkdir /$path/$i
-                    chmod -R ug+wX /$path/$i
+                    setfacl -m d:g:$group:rwx /$path/$i
                 fi
             done
         else
             mkdir $1
             cd $1
-            git init --bare
-            chmod -R ug+wX *
+            git init --bare --shared=group
         fi
         return 0
     fi
