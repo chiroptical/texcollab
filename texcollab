@@ -20,7 +20,7 @@ function usage() {
     echo "                                     --> .gitignore better be set properly"
     echo "    push                             -- push to remote"
     echo "    pull                             -- pull from remote"
-    echo "    extras <command>                 -- <push|pull> extras, includes figures, panels, and schemes"
+    echo "    extras <command>                 -- <push|pull> extras, includes figures, panels, schemes, spreadsheets, and data"
     echo "    compile                          -- compile the latex document"
     echo "    compare <file> <branch/revision> -- compare <file> with <branch/revision>:<file>"
     echo "    log [branch]                     -- view commit log of current branch, or [branch]"
@@ -31,7 +31,7 @@ function usage() {
 
 # remote helper function
 function remote_texcollab_helper(){
-    local extras=("figures" "panels" "schemes" "spreadsheets")
+    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
     if [ -d $1 ]; then
         return 1
     else
@@ -57,7 +57,7 @@ function remote_texcollab_helper(){
 
 # Another remote helper function
 function remote_extras_list(){
-    local extras=("figures" "panels" "schemes" "spreadsheets")
+    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
     local actual_extras=()
     for i in ${extras[@]}; do
         if [ -d $1/$i ]; then
@@ -154,6 +154,7 @@ function init(){
     echo "panels/*" >> .gitignore
     echo "schemes/*" >> .gitignore
     echo "spreadsheets/*" >> .gitignore
+    echo "data/*" >> .gitignore
     echo "*.dvi" >> .gitignore
     echo "*.pdf" >> .gitignore
     echo "*.aux" >> .gitignore
@@ -319,7 +320,7 @@ function pull(){
 function extras(){
     # Need our environment
     texcollab_source "<extras>"
-    local extras=("figures" "panels" "schemes" "spreadsheets")
+    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
 
     local array=($*)
     # Check command options, git will fail if they provide improper command
