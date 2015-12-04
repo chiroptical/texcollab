@@ -150,13 +150,14 @@ function init(){
 
     # Create our .gitignore
     echo ".texcollab" > .gitignore
-    echo "figures/*" >> .gitignore
-    echo "panels/*" >> .gitignore
-    echo "schemes/*" >> .gitignore
-    echo "spreadsheets/*" >> .gitignore
-    echo "data/*" >> .gitignore
+    echo "figures/" >> .gitignore
+    echo "panels/" >> .gitignore
+    echo "schemes/" >> .gitignore
+    echo "spreadsheets/" >> .gitignore
+    echo "data/" >> .gitignore
     echo "*.dvi" >> .gitignore
     echo "*.pdf" >> .gitignore
+    echo "*.eps" >> .gitignore
     echo "*.aux" >> .gitignore
     echo "*.bbl" >> .gitignore
     echo "*.blg" >> .gitignore
