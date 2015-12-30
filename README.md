@@ -45,7 +45,8 @@ It's pretty easy, I promise.
 First, you need to set up some configuration variables inside `.texcollab` (see
 the one in this repo as an example). My group uses this tool for publications
 which means a public github really isn't a great idea. We have storage on a
-remote machine with `ssh` access, that domain is in `TEXCOLLAB_REMOTE_DOMAIN`.
+remote machine with `ssh` access, that domain is in `TEXCOLLAB_REMOTE_DOMAIN`
+(could be `example.somewhere.com`, or shortcut in `.ssh/config`).
 On the remote machine exists a place where I put my "in-progress" publications,
 something like `/$SOME_PATH/shared/latex/barrymoo/$PROJECT_NAME`, which I set
 as `TEXCOLLAB_REMOTE_DIR` (obviously all but the `$PROJECT_NAME` should already
@@ -58,13 +59,14 @@ you should set your advisors and your user name for
 `view` command.
 
 Now you're ready to initialize the directory! Place your `*.tex` file, `*.bib`
-files (if necessary), and extras (figures, spreadsheets, panels, or schemes)
+files (if necessary), and extras (`figures`, `spreadsheets`, `panels`, `data`, or `schemes`)
 into the corresponding directories (Always use `supporting-information.tex` for
-supporting information). Run `texcollab init`, if you have extras run
+supporting information). Note: the extras directories are used to keep backups of various things
+for the publication (required for most funding agencies now) and these are ignored by `texcollab`
+because they tend to be binary files. Finally, run `texcollab init`, if you have extras run
 `texcollab extras push` (additionally), and let the git magic ensue :) Note,
 that `texcollab compile` exists and you should probably make sure it compiles
-properly before sending it to your advisor (they hate when it doesn't compile
-right!). 
+properly before sending it to your advisor (they hate when it doesn't compile!). 
 
 # How does my advisor use this model?
 
@@ -77,9 +79,10 @@ $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR` (note lack of `.git` ending).
 They will need to enter this manually, the environment variables are not
 available outside the script unless you make them available. 
 
-Once the clone is complete, the advisor would navigate to the new local git
-repository and modify `TEXCOLLAB_CURRENT_USER` to `$TEXCOLLAB_ADVISOR`, and
-other environment setting they choose. If you have extras run `texcollab
+Once the clone is complete, the advisor would copy the `.texcollab` file to
+the new local git repository (`cd` there) and modify `TEXCOLLAB_CURRENT_USER`
+to `$TEXCOLLAB_ADVISOR`, and
+modify other environment settings they choose. If you have extras run `texcollab
 extras pull`, they need to run `texcollab branch $TEXCOLLAB_STUDENT` (again,
 enter student manually) to make the student branch visible (git doesn't do this
 automatically), and `texcollab compile`. Voila!
@@ -88,12 +91,12 @@ automatically), and `texcollab compile`. Voila!
 
 Again, easy :P I hope you see the pattern now.
 
-Both the student and advisor can make changes willy-nilly! Commit, push, pull,
-extras push/pull, etc. When the advisor, or student, are ready to "merge"
+Both the student and advisor can make changes willy-nilly! `commit`, `push`, `pull`,
+`extras push/pull`, etc. When the advisor, or student, are ready to "merge"
 changes run `texcollab compare main.tex barrymoo` (`main.tex` of `master` with
 `main.tex` of `barrymoo`, for example), this will open up the
-`TEXCOLLAB_MERGE_TOOL` (we use meld) and then one can pick and choose the
-changes (or don't!). Finally, commit/push and the other collaborator is ready
+`TEXCOLLAB_MERGE_TOOL` (we use `meld`) and then one can pick and choose the
+changes (or don't!). Finally, `commit/push` and the other collaborator is ready
 to pull. I also added a `texcollab log` functionality, which means you can use
 the config key to compare with previous commits too (see `-h/--help`)
 
@@ -104,7 +107,7 @@ Pass the collaborator the `.texcollab`, have them change the
 `texcollab add-collab $TEXCOLLAB_STUDENT` (the `$TEXCOLLAB_STUDENT` is 
 obviously the new collaborator). The collaborator can now edit/commit/push/pull
 as normal now. AND, more importantly (arguably), the advisor can pull and `texcollab
-branch $NEW_STUDENT_BRANCH` to "merge" changes from both students.
+branch $NEW_STUDENT_BRANCH` to "merge" changes from both student/s and collaborator.
 
 # `view` and `compare`, what's a revision?
 
@@ -129,3 +132,9 @@ This is a work-in-progress and I haven't done much testing as of yet. Please sen
 me issues, or suggestions, here on github. I am very interested in making a
 nice collaboration tool for everyone. Feel free to fork, and submit pull
 requests :). 
+
+# Tips, FAQ, Etc.
+
+1. Always, always, ALWAYS run `texcollab status` before `commit/push`, this prevents you
+   from committing huge files you did not intend to! The aformentioned "huge files" should
+   be placed in `.gitignore` or an extras directory! I cannot stress this enough.
