@@ -339,7 +339,7 @@ function extras(){
 
             # Push, build up an actual extras array
             local actual_extras=$(remote_extras_list .)
-            rsync -vrzP -e ssh --delete --checksum ${actual_extras[@]} $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/
+            rsync -vrzP -e ssh --delete --checksum --links --safe-links ${actual_extras[@]} $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/
         else
             # Pull, build up an actual extras array
             local actual_extras=$(ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_extras_list $TEXCOLLAB_REMOTE_DIR.git")
