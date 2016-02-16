@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Currently supported commands, add string to usage as they become available
-supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status" "save" "new") 
+supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status" "save" "new" "push-all" "pull-all") 
 function usage() {
     echo "texcollab -- A latex collaboration engine using git"
     echo "    written by: Barry Moore"
@@ -21,6 +21,8 @@ function usage() {
     echo "    push                             -- push to remote"
     echo "    pull                             -- pull from remote"
     echo "    extras <command>                 -- <push|pull> extras, includes figures, panels, schemes, spreadsheets, and data"
+    echo "    push-all                         -- push to remote, includes extras"
+    echo "    pull-all                         -- pull from remote, includes extras"
     echo "    compile                          -- compile the latex document"
     echo "    compare <file> <branch/revision> -- compare <file> with <branch/revision>:<file>"
     echo "    log [branch]                     -- view commit log of current branch, or [branch]"
@@ -346,6 +348,16 @@ function extras(){
             rsync -vrzP -e ssh --delete --checksum --links --safe-links $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/{$(echo ${actual_extras[@]} | sed 's/ /,/g')} .
         fi
     fi
+}
+
+function push-all(){
+    push
+    extras push
+}
+
+function pull-all(){
+    pull
+    extras pull
 }
 
 function compile(){
