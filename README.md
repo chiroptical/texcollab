@@ -158,7 +158,7 @@ pull requests :).
 # Some More Advanced Settings for `.texcollab`
 
 This section exists because we don't have `sudo` access on our remote server.
-If the standard `.texcollab` template doesn't work you may consider these
+If the standard `.texcollab` template doesn't work you, you may consider these
 settings, or bug me!
 
 1. `TEXCOLLAB_REMOTE_RSYNC`: Allows you to use non-standard remote rsync
