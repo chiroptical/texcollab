@@ -141,9 +141,16 @@ feature requests, or suggestions, here on github. I am very interested in
 making a nice collaboration tool for everyone. Feel free to fork and submit
 pull requests :).
 
-# Tips, FAQ, Etc.
+# Design Principles, Tips, FAQ, Etc.
 
-1. ALWAYS, ALWAYS, ALWAYS run `texcollab status` before `commit/push`, this
+1. Important Design Principle: Nothing that isn't tracked by `texcollab` should
+   be edited inside a `texcollab` directory. What does that mean? Your content in
+   `extras` should ALWAYS be edited somewhere else! My directory structure:
+    - `~/projects/$PROJECT_NAME`
+    - `~/publications/$PROJECT_NAME`
+    Edit `extras` in the `projects` and copy to `publications`. Data in `extras`
+    has a chance of being overrided if you ignore this tip.
+2. ALWAYS, ALWAYS, ALWAYS run `texcollab status` before `commit/push`, this
    prevents you from committing, potentially huge, files you did not intend to!
    The aformentioned files should be placed in `.gitignore` or an extras
    directory!
