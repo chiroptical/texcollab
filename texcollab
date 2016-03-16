@@ -20,7 +20,7 @@ function usage() {
     echo "                                     --> .gitignore better be set properly"
     echo "    push                             -- push to remote"
     echo "    pull                             -- pull from remote"
-    echo "    extras <command>                 -- <push|pull> extras, includes figures, panels, schemes, spreadsheets, and data"
+    echo "    extras <command>                 -- <push|pull> extras, includes figures, schemes, spreadsheets, and data"
     echo "    push-all                         -- push to remote, includes extras"
     echo "    pull-all                         -- pull from remote, includes extras"
     echo "    compile                          -- compile the latex document"
@@ -33,7 +33,7 @@ function usage() {
 
 # remote helper function
 function remote_texcollab_helper(){
-    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data")
     if [ -d $1 ]; then
         return 1
     else
@@ -60,7 +60,7 @@ function remote_texcollab_helper(){
 
 # Another remote helper function
 function remote_extras_list(){
-    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data")
     local actual_extras=()
     for i in ${extras[@]}; do
         if [ -d $1/$i ]; then
@@ -154,7 +154,6 @@ function init(){
     # Create our .gitignore
     echo ".texcollab" > .gitignore
     echo "figures/" >> .gitignore
-    echo "panels/" >> .gitignore
     echo "schemes/" >> .gitignore
     echo "spreadsheets/" >> .gitignore
     echo "data/" >> .gitignore
@@ -324,7 +323,7 @@ function pull(){
 function extras(){
     # Need our environment
     texcollab_source "<extras>"
-    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data")
 
     local array=($*)
     # Check command options, git will fail if they provide improper command

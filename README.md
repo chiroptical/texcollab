@@ -32,6 +32,20 @@ allowed to commit to `master` and my advisor is never allowed to commit to
 `barrymoo`. Neither the student nor the advisor will ever `texcollab merge`
 (note it doesn't even exist!).
 
+# Directory Structure and Explaination
+
+```
+├── .texcollab                          # not tracked, the texcollab configuration file
+├── citations.bib                       # tracked, additional citations for publication
+├── data/                               # not tracked, contains raw output files
+├── figures/                            # not tracked, contains images for publication
+├── main.tex                            # tracked, the main tex file ('main' can be changed)
+├── plots/                              # tracked, create plots here (please keep an eye on `texcollab status`)
+├── schemes/                            # not tracked, contains binary files from specific programs (for example ChemDraw or MarvinSketch)
+├── spreadsheets/                       # not tracked, contains Excel, LibreOffice Calc, Gnumeric, or similar files.
+└── supporting-information.tex          # tracked, the supporting information tex file (please use this name)
+```
+
 # SSH Access and Config
 
 We assume you have ssh access to a private server to store the git remote
