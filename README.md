@@ -35,16 +35,39 @@ allowed to commit to `master` and my advisor is never allowed to commit to
 # Directory Structure and Explaination
 
 ```
-├── .texcollab                          # not tracked, the texcollab configuration file
-├── citations.bib                       # tracked, additional citations for publication
-├── data/                               # not tracked, contains raw output files
-├── figures/                            # not tracked, contains images for publication
-├── main.tex                            # tracked, the main tex file ('main' can be changed)
-├── plots/                              # tracked, create plots here (please keep an eye on `texcollab status`)
-├── schemes/                            # not tracked, contains binary files from specific programs (for example ChemDraw or MarvinSketch)
-├── spreadsheets/                       # not tracked, contains Excel, LibreOffice Calc, Gnumeric, or similar files.
-└── supporting-information.tex          # tracked, the supporting information tex file (please use this name)
+├── .texcollab
+├── citations.bib
+├── data/
+├── figures/
+├── main.tex
+├── plots/
+├── schemes/
+├── spreadsheets/
+└── supporting-information.tex
 ```
+
+Files/Directories which are tracked:
+- `citations.bib`: The citations in bibtex format (not necessary, we use an internal citation git repository), name can be changed
+- `main.tex`: The main tex files, name can be changed
+- `plots/`: A directory where users can create and modify plotting files. Read note below!
+- `supporting-information.tex`: The supporting information (not necessary), do not change name (for `texcollab compile` to work)
+
+Files/Directories which are NOT tracked:
+- `.texcollab`: The texcollab configuration file
+- `data/`: Contains raw output files from programs
+- `figures/`: Contains image files used for publication
+- `schemes/`: Contains binary files generated from specific programs, for example ChemDraw or MarvinSketch
+- `spreadsheets/`: Contains spreadsheet files, for example from Excel or Gnumeric
+
+Important notes about using `plots/`. Please be very careful with this directory! `texcollab status` is your friend.
+I expect people to have the following types of files in this directory:
+- `*.dat`: small parsed data files, likely generated from the `data/` directory, to generate images.
+- `*.plt`: gnuplot files to generate `*.{eps,pdf}`
+- `*.py`: python scripts to generate `*.{eps,pdf}`
+- `*.tex`: panels to combine `*.{eps,pdf}` into other `*.{eps,pdf}`
+
+I like to use Inkscape to combine images, but `*.svg` files are ignored. Put the `*.svg` files into
+`schemes/` if you want to share them. 
 
 # SSH Access and Config
 
