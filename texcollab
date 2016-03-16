@@ -158,6 +158,7 @@ function init(){
     echo "spreadsheets/" >> .gitignore
     echo "data/" >> .gitignore
     echo "*.dvi" >> .gitignore
+    echo "*.svg" >> .gitignore
     echo "*.pdf" >> .gitignore
     echo "*.eps" >> .gitignore
     echo "*.aux" >> .gitignore
