@@ -436,14 +436,18 @@ function compare(){
         # You shouldn't be allowed to compare things if they aren't yours
         #  Obviously, people could mess with the configs, but I can't fix stupid
         local current_branch=$(git branch | sed -n '/\* /s///p')
+
+        # Strip path of '/' characters otherwise below will fail
+        local file_name=$(echo ${array[0]} | sed 's/\// /' | awk '{print $NF}')
+
         if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
-            git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
-            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-${array[0]}.tmp
-            rm ${array[1]}-${array[0]}.tmp
+            git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.tmp
+            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-$file_name.tmp
+            rm ${array[1]}-$file_name.tmp
         elif [ $current_branch == $TEXCOLLAB_STUDENT ]; then
-            git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
-            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-${array[0]}.tmp
-            rm ${array[1]}-${array[0]}.tmp
+            git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.tmp
+            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-$file_name.tmp
+            rm ${array[1]}-$file_name.tmp
         else
             errors+=("Error <compare>: You should be working in your branch!")
             return 1
@@ -461,12 +465,15 @@ function view(){
         # Source Environment
         texcollab_source "<view>"
 
+        # Strip path of '/' characters otherwise below will fail
+        local file_name=$(echo ${array[0]} | sed 's/\// /' | awk '{print $NF}')
+
         # We can let people <view> whatever they please, we'll append the
         #   file extension twice to ensure we have syntax highlighting
         #   in the temporary file
-        git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.${array[0]##*.}
-        $TEXCOLLAB_EDITOR ${array[1]}-${array[0]}.${array[0]##*.}
-        rm ${array[1]}-${array[0]}.${array[0]##*.}
+        git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.${array[0]##*.}
+        $TEXCOLLAB_EDITOR ${array[1]}-$file_name.${array[0]##*.}
+        rm ${array[1]}-$file_name.${array[0]##*.}
     fi
 }
 
@@ -501,7 +508,10 @@ function save(){
         errors+=("Error <save>: Have you used save before?, try -h/--help")
         return 1
     else
-        git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
+        # Strip path of '/' characters otherwise below will fail
+        local file_name=$(echo ${array[0]} | sed 's/\// /' | awk '{print $NF}')
+
+        git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.tmp
     fi
 }
 
