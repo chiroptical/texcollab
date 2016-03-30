@@ -42,6 +42,7 @@ allowed to commit to `master` and my advisor is never allowed to commit to
 ├── main.tex
 ├── plots/
 ├── schemes/
+├── share/
 ├── spreadsheets/
 └── supporting-information.tex
 ```
@@ -56,7 +57,8 @@ Files/Directories which are NOT tracked:
 - `.texcollab`: The texcollab configuration file
 - `data/`: Contains raw output files from programs
 - `figures/`: Contains image files used for publication
-- `schemes/`: Contains binary files generated from specific programs, for example ChemDraw or MarvinSketch
+- `schemes/`: See section 2.5.5 of [ACS Author Guide](http://pubs.acs.org/paragonplus/submission/joceah/joceah_authguide.pdf), we choose to separate these images from `figures/` but you can choose what's best for you.
+- `share/`: Contains binary files generated from specific programs, for example ChemDraw or MarvinSketch
 - `spreadsheets/`: Contains spreadsheet files, for example from Excel or Gnumeric
 
 Important notes about using `plots/`. Please be very careful with this directory! `texcollab status` is your friend.
@@ -67,7 +69,7 @@ I expect people to have the following types of files in this directory:
 - `*.tex`: panels to combine `*.{eps,pdf}` into other `*.{eps,pdf}`
 
 I like to use Inkscape to combine images, but `*.svg` files are ignored. Put the `*.svg` files into
-`schemes/` if you want to share them. 
+`share/` if you want to share them. 
 
 # SSH Access and Config
 
@@ -99,7 +101,7 @@ you should set your advisor and your user name for
 `view` command.
 
 Now you're ready to initialize the directory! Place your `*.tex` file, `*.bib`
-files (if necessary), and extras (`figures`, `spreadsheets`, `panels`, `data`,
+files (if necessary), and extras (`figures`, `spreadsheets`, `share`, `data`,
 or `schemes`) into the corresponding directories (Always use
 `supporting-information.tex` for supporting information). Note: the extras
 directories are used to keep backups of various things for the publication

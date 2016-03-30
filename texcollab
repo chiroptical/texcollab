@@ -20,7 +20,7 @@ function usage() {
     echo "                                     --> .gitignore better be set properly"
     echo "    push                             -- push to remote"
     echo "    pull                             -- pull from remote"
-    echo "    extras <command>                 -- <push|pull> extras, includes figures, schemes, spreadsheets, and data"
+    echo "    extras <command>                 -- <push|pull> extras, includes figures, schemes, spreadsheets, data, and share"
     echo "    push-all                         -- push to remote, includes extras"
     echo "    pull-all                         -- pull from remote, includes extras"
     echo "    compile                          -- compile the latex document"
@@ -33,7 +33,7 @@ function usage() {
 
 # remote helper function
 function remote_texcollab_helper(){
-    local extras=("figures" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data" "share")
     if [ -d $1 ]; then
         return 1
     else
@@ -60,7 +60,7 @@ function remote_texcollab_helper(){
 
 # Another remote helper function
 function remote_extras_list(){
-    local extras=("figures" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data" "share")
     local actual_extras=()
     for i in ${extras[@]}; do
         if [ -d $1/$i ]; then
@@ -324,7 +324,7 @@ function pull(){
 function extras(){
     # Need our environment
     texcollab_source "<extras>"
-    local extras=("figures" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data" "share")
 
     local array=($*)
     # Check command options, git will fail if they provide improper command
