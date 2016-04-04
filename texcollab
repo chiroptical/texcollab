@@ -304,11 +304,26 @@ function pull(){
                 continue
             else
                 local new_files=($(git diff --diff-filter=A --name-only $current_branch..$i))
+
+                # Use these for later
+                local file_name=0
+                local file_path=0
+
                 for j in ${new_files[@]}; do
+                    file_name=(${j//\// })
                     read -p "Add new file '$j' from branch '$i' (y,N)? " choice
                     case "$choice" in
                         y|Y )
-                            git show $i:$j > $j
+                            if [ ${#file_name[@]} -gt 1 ]; then
+                                file_path=${j%/*}
+                                file_name=${j##*/}
+                                if [ ! -d "$file_path" ]; then
+                                    mkdir $file_path
+                                fi
+                                git show $i:$j > $j
+                            else
+                                git show $i:$j > $j
+                            fi
                             echo "Copied new file '$j' from branch '$i'"
                             ;;
                         n|N|* )
