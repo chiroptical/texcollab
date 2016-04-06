@@ -359,11 +359,11 @@ function extras(){
             local actual_extras=$(remote_extras_list .)
             local rsync_files_remote_domain="${actual_extras[@]} $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/"
             # Some undocumented features, will get skipped if using standard version
-            if [ -n $TEXCOLLAB_REMOTE_RSYNC -a -n $TEXCOLLAB_GROUP ]; then
+            if [ -n "$TEXCOLLAB_REMOTE_RSYNC" -a -n "$TEXCOLLAB_GROUP" ]; then
                 rsync $base_rsync_options --rsync-path=$TEXCOLLAB_REMOTE_RSYNC --group --chown=:$TEXCOLLAB_GROUP $rsync_files_remote_domain
-            elif [ -n $TEXCOLLAB_REMOTE_RSYNC ]; then
+            elif [ -n "$TEXCOLLAB_REMOTE_RSYNC" ]; then
                 rsync $base_rsync_options --rsync-path=$TEXCOLLAB_REMOTE_RSYNC $rsync_files_remote_domain
-            elif [ -n $TEXCOLLAB_GROUP ]; then
+            elif [ -n "$TEXCOLLAB_GROUP" ]; then
                 rsync $base_rsync_options --group --chown=:$TEXCOLLAB_GROUP $rsync_files_remote_domain
             else
                 rsync $base_rsync_options $rsync_files_remote_domain
