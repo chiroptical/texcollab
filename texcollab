@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Currently supported commands, add string to usage as they become available
-supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status" "save" "new") 
+supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status" "save" "new" "push-all" "pull-all") 
 function usage() {
     echo "texcollab -- A latex collaboration engine using git"
     echo "    written by: Barry Moore"
@@ -20,7 +20,9 @@ function usage() {
     echo "                                     --> .gitignore better be set properly"
     echo "    push                             -- push to remote"
     echo "    pull                             -- pull from remote"
-    echo "    extras <command>                 -- <push|pull> extras, includes figures, panels, schemes, spreadsheets, and data"
+    echo "    extras <command>                 -- <push|pull> extras, includes figures, schemes, spreadsheets, data, and share"
+    echo "    push-all                         -- push to remote, includes extras"
+    echo "    pull-all                         -- pull from remote, includes extras"
     echo "    compile                          -- compile the latex document"
     echo "    compare <file> <branch/revision> -- compare <file> with <branch/revision>:<file>"
     echo "    log [branch]                     -- view commit log of current branch, or [branch]"
@@ -31,7 +33,7 @@ function usage() {
 
 # remote helper function
 function remote_texcollab_helper(){
-    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data" "share")
     if [ -d $1 ]; then
         return 1
     else
@@ -58,7 +60,7 @@ function remote_texcollab_helper(){
 
 # Another remote helper function
 function remote_extras_list(){
-    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data" "share")
     local actual_extras=()
     for i in ${extras[@]}; do
         if [ -d $1/$i ]; then
@@ -152,11 +154,11 @@ function init(){
     # Create our .gitignore
     echo ".texcollab" > .gitignore
     echo "figures/" >> .gitignore
-    echo "panels/" >> .gitignore
     echo "schemes/" >> .gitignore
     echo "spreadsheets/" >> .gitignore
     echo "data/" >> .gitignore
     echo "*.dvi" >> .gitignore
+    echo "*.svg" >> .gitignore
     echo "*.pdf" >> .gitignore
     echo "*.eps" >> .gitignore
     echo "*.aux" >> .gitignore
@@ -302,11 +304,26 @@ function pull(){
                 continue
             else
                 local new_files=($(git diff --diff-filter=A --name-only $current_branch..$i))
+
+                # Use these for later
+                local file_name=0
+                local file_path=0
+
                 for j in ${new_files[@]}; do
+                    file_name=(${j//\// })
                     read -p "Add new file '$j' from branch '$i' (y,N)? " choice
                     case "$choice" in
                         y|Y )
-                            git show $i:$j > $j
+                            if [ ${#file_name[@]} -gt 1 ]; then
+                                file_path=${j%/*}
+                                file_name=${j##*/}
+                                if [ ! -d "$file_path" ]; then
+                                    mkdir $file_path
+                                fi
+                                git show $i:$j > $j
+                            else
+                                git show $i:$j > $j
+                            fi
                             echo "Copied new file '$j' from branch '$i'"
                             ;;
                         n|N|* )
@@ -322,7 +339,7 @@ function pull(){
 function extras(){
     # Need our environment
     texcollab_source "<extras>"
-    local extras=("figures" "panels" "schemes" "spreadsheets" "data")
+    local extras=("figures" "schemes" "spreadsheets" "data" "share")
 
     local array=($*)
     # Check command options, git will fail if they provide improper command
@@ -333,19 +350,40 @@ function extras(){
         errors+=("Error <extras>: valid commands to <extras> include 'push' and 'pull', try -h/--help")
         return 1
     else
+        local base_rsync_options="-vrzP -e ssh --delete --checksum --links --safe-links"
         if [ ${array[0]} == "push" ]; then
             # First push will need this command, "/extras" just gets us to the correct `else if` statement in remote_texcollab_helper
             ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_texcollab_helper $TEXCOLLAB_REMOTE_DIR.git/extras" 2> /dev/null
 
             # Push, build up an actual extras array
             local actual_extras=$(remote_extras_list .)
-            rsync -vrzP -e ssh --delete --checksum --links --safe-links ${actual_extras[@]} $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/
+            local rsync_files_remote_domain="${actual_extras[@]} $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/"
+            # Some undocumented features, will get skipped if using standard version
+            if [ -n $TEXCOLLAB_REMOTE_RSYNC -a -n $TEXCOLLAB_GROUP ]; then
+                rsync $base_rsync_options --rsync-path=$TEXCOLLAB_REMOTE_RSYNC --group --chown=:$TEXCOLLAB_GROUP $rsync_files_remote_domain
+            elif [ -n $TEXCOLLAB_REMOTE_RSYNC ]; then
+                rsync $base_rsync_options --rsync-path=$TEXCOLLAB_REMOTE_RSYNC $rsync_files_remote_domain
+            elif [ -n $TEXCOLLAB_GROUP ]; then
+                rsync $base_rsync_options --group --chown=:$TEXCOLLAB_GROUP $rsync_files_remote_domain
+            else
+                rsync $base_rsync_options $rsync_files_remote_domain
+            fi
         else
             # Pull, build up an actual extras array
             local actual_extras=$(ssh $TEXCOLLAB_REMOTE_DOMAIN "$(typeset -f); remote_extras_list $TEXCOLLAB_REMOTE_DIR.git")
-            rsync -vrzP -e ssh --delete --checksum --links --safe-links $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/{$(echo ${actual_extras[@]} | sed 's/ /,/g')} .
+            rsync $base_rsync_options $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git/{$(echo ${actual_extras[@]} | sed 's/ /,/g')} .
         fi
     fi
+}
+
+function push-all(){
+    push
+    extras push
+}
+
+function pull-all(){
+    pull
+    extras pull
 }
 
 function compile(){
@@ -413,14 +451,18 @@ function compare(){
         # You shouldn't be allowed to compare things if they aren't yours
         #  Obviously, people could mess with the configs, but I can't fix stupid
         local current_branch=$(git branch | sed -n '/\* /s///p')
+
+        # Strip path of '/' characters otherwise below will fail
+        local file_name=$(echo ${array[0]} | sed 's/\// /' | awk '{print $NF}')
+
         if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
-            git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
-            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-${array[0]}.tmp
-            rm ${array[1]}-${array[0]}.tmp
+            git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.tmp
+            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-$file_name.tmp
+            rm ${array[1]}-$file_name.tmp
         elif [ $current_branch == $TEXCOLLAB_STUDENT ]; then
-            git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
-            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-${array[0]}.tmp
-            rm ${array[1]}-${array[0]}.tmp
+            git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.tmp
+            $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-$file_name.tmp
+            rm ${array[1]}-$file_name.tmp
         else
             errors+=("Error <compare>: You should be working in your branch!")
             return 1
@@ -438,12 +480,15 @@ function view(){
         # Source Environment
         texcollab_source "<view>"
 
+        # Strip path of '/' characters otherwise below will fail
+        local file_name=$(echo ${array[0]} | sed 's/\// /' | awk '{print $NF}')
+
         # We can let people <view> whatever they please, we'll append the
         #   file extension twice to ensure we have syntax highlighting
         #   in the temporary file
-        git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.${array[0]##*.}
-        $TEXCOLLAB_EDITOR ${array[1]}-${array[0]}.${array[0]##*.}
-        rm ${array[1]}-${array[0]}.${array[0]##*.}
+        git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.${array[0]##*.}
+        $TEXCOLLAB_EDITOR ${array[1]}-$file_name.${array[0]##*.}
+        rm ${array[1]}-$file_name.${array[0]##*.}
     fi
 }
 
@@ -478,7 +523,10 @@ function save(){
         errors+=("Error <save>: Have you used save before?, try -h/--help")
         return 1
     else
-        git show ${array[1]}:${array[0]} > ${array[1]}-${array[0]}.tmp
+        # Strip path of '/' characters otherwise below will fail
+        local file_name=$(echo ${array[0]} | sed 's/\// /' | awk '{print $NF}')
+
+        git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.tmp
     fi
 }
 
