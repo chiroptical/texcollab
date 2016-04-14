@@ -156,6 +156,7 @@ function init(){
     echo "figures/" >> .gitignore
     echo "schemes/" >> .gitignore
     echo "spreadsheets/" >> .gitignore
+    echo "share/" >> .gitignore
     echo "data/" >> .gitignore
     echo "*.dvi" >> .gitignore
     echo "*.svg" >> .gitignore
