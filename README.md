@@ -38,6 +38,7 @@ allowed to commit to `master` and my advisor is never allowed to commit to
 ├── .texcollab
 ├── citations.bib
 ├── data/
+├── esub/
 ├── figures/
 ├── main.tex
 ├── plots/
@@ -56,6 +57,7 @@ Files/Directories which are tracked:
 Files/Directories which are NOT tracked:
 - `.texcollab`: The texcollab configuration file
 - `data/`: Contains raw output files from programs
+- `esub/`: We use scripts which generate electronic submissions to online journals in this directory
 - `figures/`: Contains image files used for publication
 - `schemes/`: See section 2.5.5 of [ACS Author Guide](http://pubs.acs.org/paragonplus/submission/joceah/joceah_authguide.pdf), we choose to separate these images from `figures/` but you can choose what's best for you.
 - `share/`: Contains binary files generated from specific programs, for example ChemDraw or MarvinSketch
