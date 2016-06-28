@@ -399,7 +399,7 @@ function compile(){
     check_latex_return_status() {
         if [ $? != 0 ]; then      
             echo "Latex failed!"  
-            return 1;              
+            exit
         fi                        
     }                             
 
