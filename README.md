@@ -24,15 +24,15 @@ data to be backed up and available upon request. This tool allows for both.
 
 # What the heck is the "Advisor-Student/s Mergeless" model?
 
-As I said, I dislike `git merge` for LaTeX and our group needed a simple workflow for
-everyone involved with a project. So, the model consists of the `master`
-branch (your advisor's branch!) and a branch for each "student" (I will refer
-to myself as the student i.e. the `barrymoo` branch). The student is never
-allowed to commit to `master` and my advisor is never allowed to commit to
-`barrymoo`. Neither the student nor the advisor will ever `texcollab merge`
+As I said, I dislike `git merge` for LaTeX and our group needed a simple
+workflow for everyone involved with a project. So, the model consists of the
+`master` branch (your advisor's branch!) and a branch for each "student" (I
+will refer to myself as the student i.e. the `barrymoo` branch). The student is
+never allowed to commit to `master` and my advisor is never allowed to commit
+to `barrymoo`. Neither the student nor the advisor will ever `texcollab merge`
 (note it doesn't even exist!).
 
-# Directory Structure and Explaination
+# Directory Structure and Explanation
 
 ```
 ├── .texcollab
@@ -49,29 +49,40 @@ allowed to commit to `master` and my advisor is never allowed to commit to
 ```
 
 Files/Directories which are tracked:
-- `citations.bib`: The citations in bibtex format (not necessary, we use an internal citation git repository), name can be changed
+- `citations.bib`: The citations in bibtex format (not necessary, we use an
+  internal citation git repository), name can be changed
 - `main.tex`: The main tex files, name can be changed
-- `plots/`: A directory where users can create and modify plotting files. Read note below!
-- `supporting-information.tex`: The supporting information (not necessary), do not change name (for `texcollab compile` to work)
+- `plots/`: A directory where users can create and modify plotting files. Read
+  note below!
+- `supporting-information.tex`: The supporting information (not necessary), do
+  not change name (for `texcollab compile` to work)
 
 Files/Directories which are NOT tracked:
 - `.texcollab`: The texcollab configuration file
 - `data/`: Contains raw output files from programs
-- `esub/`: We use scripts which generate electronic submissions to online journals in this directory
+- `esub/`: We use scripts which generate electronic submissions to online
+  journals in this directory
 - `figures/`: Contains image files used for publication
-- `schemes/`: See section 2.5.5 of [ACS Author Guide](http://pubs.acs.org/paragonplus/submission/joceah/joceah_authguide.pdf), we choose to separate these images from `figures/` but you can choose what's best for you.
-- `share/`: Contains binary files generated from specific programs, for example ChemDraw or MarvinSketch
-- `spreadsheets/`: Contains spreadsheet files, for example from Excel or Gnumeric
+- `schemes/`: See section 2.5.5 of [ACS Author
+  Guide](http://pubs.acs.org/paragonplus/submission/joceah/joceah_authguide.pdf),
+we choose to separate these images from `figures/` but you can choose what's
+best for you.
+- `share/`: Contains binary files generated from specific programs, for example
+  ChemDraw or MarvinSketch
+- `spreadsheets/`: Contains spreadsheet files, for example from Excel or
+  Gnumeric
 
-Important notes about using `plots/`. Please be very careful with this directory! `texcollab status` is your friend.
-I expect people to have the following types of files in this directory:
-- `*.dat`: small parsed data files, likely generated from the `data/` directory, to generate images.
+Important notes about using `plots/`. Please be very careful with this
+directory! `texcollab status` is your friend.  I expect people to have the
+following types of files in this directory:
+- `*.dat`: small parsed data files, likely generated from the `data/`
+  directory, to generate images.
 - `*.plt`: gnuplot files to generate `*.{eps,pdf}`
 - `*.py`: python scripts to generate `*.{eps,pdf}`
 - `*.tex`: panels to combine `*.{eps,pdf}` into other `*.{eps,pdf}`
 
-I like to use Inkscape to combine images, but `*.svg` files are ignored. Put the `*.svg` files into
-`share/` if you want to share them. 
+I like to use Inkscape to combine images, but `*.svg` files are ignored. Put
+the `*.svg` files into `share/` if you want to share them. 
 
 # SSH Access and Config
 
@@ -94,9 +105,9 @@ remote machine with `ssh` access, that domain is in `TEXCOLLAB_REMOTE_DOMAIN`
 remote machine exists a directory where I put my "in-progress" publications,
 something like `/$SOME_PATH/shared/latex/barrymoo/$PROJECT_NAME`, which I set
 as `TEXCOLLAB_REMOTE_DIR` (obviously all but the `$PROJECT_NAME` should already
-exist on the remote machine!). The project name should be unique and will be stored on the remote
-machine as `$PROJECT_NAME.git` (a standard convention for git remote repos). Next,
-you should set your advisor and your user name for
+exist on the remote machine!). The project name should be unique and will be
+stored on the remote machine as `$PROJECT_NAME.git` (a standard convention for
+git remote repos). Next, you should set your advisor and your user name for
 `TEXCOLLAB_ADVISOR/TEXCOLLAB_STUDENT`, respectively. The
 `TEXCOLLAB_CURRENT_USER` can be set to `$TEXCOLLAB_ADVISOR` or
 `$TEXCOLLAB_STUDENT` (note the `$`) and the `TEXCOLLAB_EDITOR` is used for the
@@ -181,6 +192,12 @@ Computational Chemistry journals using this tool. Please send me issues,
 feature requests, or suggestions, here on github. I am very interested in
 making a nice collaboration tool for everyone. Feel free to fork and submit
 pull requests :).
+
+Some recent additions:
+
+1. bash command line autocompletion, `source texcollab-autocomplete.sh` or add
+   the appropriate command to your `.bashrc` to have this functionality all the
+   time.
 
 # Design Principles, Tips, FAQ, Etc.
 
