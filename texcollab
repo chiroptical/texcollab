@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Currently supported commands, add string to usage as they become available
-supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status" "save" "new" "push-all" "pull-all") 
+supported_commands=("init" "clone" "branch" "add-collab" "commit" "push" "pull" "extras" "compile" "compare" "log" "view" "status" "save" "new" "push-all" "pull-all" "help" "usage") 
 function usage() {
     echo "texcollab -- A latex collaboration engine using git"
     echo "    written by: Barry Moore"
@@ -10,6 +10,7 @@ function usage() {
     echo "Usage:"
     echo "    texcollab <command> [option]"
     echo "Available Commands:"
+    echo "    help, usage                      -- show this screen"
     echo "    init                             -- initialize a remote directory"
     echo "    clone <repo> [name]              -- clone <repo>"
     echo "    branch [branch]                  -- list branch or change to [branch]"
@@ -557,6 +558,10 @@ function new(){
         errors+=("Error <new>: Have you used status before?, try -h/--help")
         return 1
     fi
+}
+
+function help(){
+    usage
 }
 
 # Turn command line options into useful arrays
