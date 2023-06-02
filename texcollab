@@ -149,7 +149,7 @@ function init(){
         errors+=('Error <init>: why are we in a git repository?')
         return 1
     else
-        git init
+        git init --initial-branch=master
     fi
 
     # Create our .gitignore
