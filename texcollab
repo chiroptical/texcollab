@@ -149,7 +149,7 @@ function init(){
         errors+=('Error <init>: why are we in a git repository?')
         return 1
     else
-        git init --initial-branch=master
+        git init --initial-branch=main
     fi
 
     # Create our .gitignore
@@ -172,11 +172,11 @@ function init(){
     echo "*.tmp" >> .gitignore
     echo "*~" >> .gitignore
 
-    # Now we can add, commit, push to master
+    # Now we can add, commit, push to main
     git remote add origin $TEXCOLLAB_REMOTE_DOMAIN:$TEXCOLLAB_REMOTE_DIR.git
     git add --all
     git commit -m "Initial Commit"
-    git push origin master
+    git push origin main
 
     # Make the student branch
     git checkout -b $TEXCOLLAB_STUDENT
@@ -247,7 +247,7 @@ function commit(){
         # You can't commit to another persons repo
         #  Obviously, people could mess with the configs, but I can't fix stupid
         local current_branch=$(git branch | sed -n '/\* /s///p')
-        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
+        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "main" ]; then
             git add --all
             # eval gets around issue with quotes
             eval git commit -m \"${array[@]}\"
@@ -275,7 +275,7 @@ function push(){
         # You can't push to another persons repo
         #  Obviously, people could mess with the configs, but I can't fix stupid
         local current_branch=$(git branch | sed -n '/\* /s///p')
-        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
+        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "main" ]; then
             git push origin $current_branch
         elif [ $current_branch == $TEXCOLLAB_STUDENT ]; then
             git push origin $current_branch
@@ -464,7 +464,7 @@ function compare(){
         # Strip path of '/' characters otherwise below will fail
         local file_name=$(echo ${array[0]} | sed 's/\// /' | awk '{print $NF}')
 
-        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "master" ]; then
+        if [ $TEXCOLLAB_CURRENT_USER == $TEXCOLLAB_ADVISOR ] && [ $current_branch == "main" ]; then
             git show ${array[1]}:${array[0]} > ${array[1]}-$file_name.tmp
             $TEXCOLLAB_MERGE_TOOL ${array[0]} ${array[1]}-$file_name.tmp
             rm ${array[1]}-$file_name.tmp
