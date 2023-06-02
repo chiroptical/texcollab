@@ -150,6 +150,7 @@ function init(){
         return 1
     else
         git init --initial-branch=main
+        git checkout -b main
     fi
 
     # Create our .gitignore
